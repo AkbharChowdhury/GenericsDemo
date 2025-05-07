@@ -17,8 +17,11 @@ class Apple(BaseModel, Fruit):
 class Banana(BaseModel, Fruit):
     name: str = 'Banana'
 
+
 class Pineapple(BaseModel, Fruit):
     name: str = 'Pineapple'
+
+
 class Box[T]:
     def __init__(self):
         self.__items: list[T] = list()
@@ -34,17 +37,31 @@ class Box[T]:
         return self.__items
 
 
-class FruitBox(BaseModel, Generic[T]):
+class FruitBoxAny(BaseModel, Generic[T]):
     fruit_type: T
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    items: list[T] = list[T]
+    items: list[T] = Field(default_factory=list[T])
+
     def add(self, item: T):
         self.items.append(item)
 
 
-    # fruit_type: T
-    # items: Field(default=list[T])
+# class FruitBox(BaseModel, Generic[T]):
+#     fruit_type: T
+#     model_config = ConfigDict(arbitrary_types_allowed=True)
+#     items: list[T] = Field(default_factory=list[T])
+#
+#     def add(self, item: T):
+#         self.items.append(item)
 
+
+class FruitBox(BaseModel, Generic[T]):
+    fruit_type: T
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    items: list[fruit_type] = Field(default_factory=list[fruit_type])
+
+    def add(self, item: T):
+        self.items.append(item)
 
 class BananaBox(Box[Banana]):
     pass
@@ -61,11 +78,15 @@ def main():
     banana_box = BananaBox()
     banana_box.add(Banana())
 
-
-if __name__ == '__main__':
-    # main()
-    box = FruitBox(fruit_type=Banana(), items=[Banana(), Apple()])
+def any_fruit():
+    box = FruitBoxAny(fruit_type=Banana(), items=[Banana(), Apple()])
     box.add(Pineapple())
     print(box.items)
     print(len(box.items))
+if __name__ == '__main__':
+    box = FruitBox(fruit_type=Apple())
+    box.add(Apple())
+    box.add(Banana())
+    print(box.items)
+    # main()
 
