@@ -1,8 +1,8 @@
-from typing import Generic, TypeVar, Optional, Any
+from typing import Generic, TypeVar
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import ConfigDict, Field
 
-from fruits import Fruit, Apple, Banana, Pineapple
+from fruits import *
 
 T = TypeVar('T', bound=Fruit)
 
@@ -25,21 +25,22 @@ class Box[T]:
 class BananaBox(Box[Banana]):
     pass
 
+
 class FruitBox(BaseModel, Generic[T]):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     items: list[T] = Field(default_factory=list[T])
 
-    def add(self, item: T):
+    def add(self, item: T) -> None:
         self.items.append(item)
+
+    def remove(self, item: T) -> None:
+        self.items.remove(item)
 
 
 def main():
     apple_box = Box[Apple]()
     apple_box.add(Apple())
     apple_box.add(Apple())
-
-    for item in apple_box.items:
-        print(item.name)
 
     banana_box = BananaBox()
     banana_box.add(Banana())
@@ -48,10 +49,13 @@ def main():
 def any_fruit():
     box = FruitBox(items=[Banana(), Apple()])
     box.add(Pineapple())
+    box.add(Pear())
     print(box.items)
-    print(len(box.items))
+    box.remove(Pear())
+    box.remove(Apple())
+    print(box.items)
+
 
 
 if __name__ == '__main__':
     any_fruit()
-

@@ -15,3 +15,7 @@ class Banana(BaseModel, Fruit):
 
 class Pineapple(BaseModel, Fruit):
     name: str = 'Pineapple'
+
+
+class Pear(BaseModel, Fruit):
+    name: str = 'Pear'
