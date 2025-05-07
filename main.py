@@ -17,7 +17,8 @@ class Apple(BaseModel, Fruit):
 class Banana(BaseModel, Fruit):
     name: str = 'Banana'
 
-
+class Pineapple(BaseModel, Fruit):
+    name: str = 'Pineapple'
 class Box[T]:
     def __init__(self):
         self.__items: list[T] = list()
@@ -40,7 +41,7 @@ class FruitBox(BaseModel, Generic[T]):
     def add(self, item: T):
         self.items.append(item)
 
-    pass
+
     # fruit_type: T
     # items: Field(default=list[T])
 
@@ -63,8 +64,8 @@ def main():
 
 if __name__ == '__main__':
     # main()
-    box = FruitBox(fruit_type=Banana())
-    box.add(Banana())
+    box = FruitBox(fruit_type=Banana(), items=[Banana(), Apple()])
+    box.add(Pineapple())
+    print(box.items)
     print(len(box.items))
-    # print(box.items)
-    # print(type(box.items))
+
