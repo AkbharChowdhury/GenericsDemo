@@ -1,25 +1,10 @@
-from typing import Generic, TypeVar, Optional
+from typing import Generic, TypeVar, Optional, Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-
-class Fruit:
-    pass
-
+from fruits import Fruit, Apple, Banana, Pineapple
 
 T = TypeVar('T', bound=Fruit)
-
-
-class Apple(BaseModel, Fruit):
-    name: str = 'Apple'
-
-
-class Banana(BaseModel, Fruit):
-    name: str = 'Banana'
-
-
-class Pineapple(BaseModel, Fruit):
-    name: str = 'Pineapple'
 
 
 class Box[T]:
@@ -37,35 +22,15 @@ class Box[T]:
         return self.__items
 
 
-class FruitBoxAny(BaseModel, Generic[T]):
-    fruit_type: T
+class BananaBox(Box[Banana]):
+    pass
+
+class FruitBox(BaseModel, Generic[T]):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     items: list[T] = Field(default_factory=list[T])
 
     def add(self, item: T):
         self.items.append(item)
-
-
-# class FruitBox(BaseModel, Generic[T]):
-#     fruit_type: T
-#     model_config = ConfigDict(arbitrary_types_allowed=True)
-#     items: list[T] = Field(default_factory=list[T])
-#
-#     def add(self, item: T):
-#         self.items.append(item)
-
-
-class FruitBox(BaseModel, Generic[T]):
-    fruit_type: T
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-    items: list[fruit_type] = Field(default_factory=list[T])
-
-    def add(self, item: T):
-        self.items.append(item)
-
-
-class BananaBox(Box[Banana]):
-    pass
 
 
 def main():
@@ -81,15 +46,12 @@ def main():
 
 
 def any_fruit():
-    box = FruitBoxAny(fruit_type=Banana(), items=[Banana(), Apple()])
+    box = FruitBox(items=[Banana(), Apple()])
     box.add(Pineapple())
     print(box.items)
     print(len(box.items))
 
 
 if __name__ == '__main__':
-    box = FruitBox(fruit_type=Apple(), items=[Apple()])
-    box.add(Apple())
-    # box.add(Banana())
-    print(box.items)
-    # main()
+    any_fruit()
+
