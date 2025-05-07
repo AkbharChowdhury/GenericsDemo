@@ -12,6 +12,13 @@ class Box[T]:
         self.__items: list[T] = list()
 
     def add(self, item: T) -> None:
+        is_valid_fruit = isinstance(item, Apple)
+        if not is_valid_fruit:
+            print()
+            print(T)
+            print(f'{item} is not a valid fruit')
+            return
+
         self.__items.append(item)
 
     def remove(self, item: T) -> None:
@@ -40,6 +47,8 @@ class FruitBox(BaseModel, Generic[T]):
 def main():
     apple_box = Box[Apple]()
     apple_box.add(Apple())
+    apple_box.add(Pear())
+    exit(0)
     apple_box.add(Apple())
 
     banana_box = BananaBox()
@@ -58,4 +67,5 @@ def any_fruit():
 
 
 if __name__ == '__main__':
-    any_fruit()
+    # any_fruit()
+    main()
