@@ -58,10 +58,11 @@ class FruitBoxAny(BaseModel, Generic[T]):
 class FruitBox(BaseModel, Generic[T]):
     fruit_type: T
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    items: list[fruit_type] = Field(default_factory=list[fruit_type])
+    items: list[fruit_type] = Field(default_factory=list[T])
 
     def add(self, item: T):
         self.items.append(item)
+
 
 class BananaBox(Box[Banana]):
     pass
@@ -78,15 +79,17 @@ def main():
     banana_box = BananaBox()
     banana_box.add(Banana())
 
+
 def any_fruit():
     box = FruitBoxAny(fruit_type=Banana(), items=[Banana(), Apple()])
     box.add(Pineapple())
     print(box.items)
     print(len(box.items))
+
+
 if __name__ == '__main__':
-    box = FruitBox(fruit_type=Apple())
+    box = FruitBox(fruit_type=Apple(), items=[Apple()])
     box.add(Apple())
-    box.add(Banana())
+    # box.add(Banana())
     print(box.items)
     # main()
-
