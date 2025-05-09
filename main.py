@@ -36,13 +36,14 @@ class FruitBox(BaseModel, Generic[T]):
     def remove(self, item: T) -> None:
         self.items.remove(item)
 
+    def __str__(self):
+        return self.items.__str__()
+
 
 class FruitBoxSpecific(BaseModel, Generic[T]):
     FRUIT_TYPE: T
     items: list[T] = []
     model_config = ConfigDict(arbitrary_types_allowed=True)
-
-
 
     def add(self, item: T) -> None:
         self.items.append(item)
@@ -65,10 +66,8 @@ def any_fruit():
     box = FruitBox(items=[Banana(), Apple()])
     box.add(Pineapple())
     box.add(Pear())
-    print(box.items)
-    box.remove(Pear())
-    box.remove(Apple())
-    print(box.items)
+    print(box.items.index(Pear()))
+    print(box)
 
 
 def fruit_specific():
@@ -88,6 +87,6 @@ def fruit_specific():
 
 
 if __name__ == '__main__':
-    fruit_specific()
-    # any_fruit()
+    # fruit_specific()
+    any_fruit()
     # main()
