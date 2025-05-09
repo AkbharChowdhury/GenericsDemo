@@ -6,7 +6,7 @@ from pydantic import ConfigDict
 T = TypeVar('T', bound=Fruit)
 
 
-class MyBox(BaseModel, Generic[T]):
+class Box(BaseModel, Generic[T]):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     FRUIT_TYPE: T
     items: list[T] = []
@@ -15,7 +15,9 @@ class MyBox(BaseModel, Generic[T]):
         self.model_validate({'FRUIT_TYPE': item})
         self.items.append(item)
 
-
+class BananaBox(Box[Banana]):
+    
+    pass
 def main():
     fruit: T = Pear
     fruit_list: list[Pear()] = [
@@ -23,9 +25,13 @@ def main():
         # Apple(),
     ]
 
-    box = MyBox[fruit](FRUIT_TYPE=fruit(), items=fruit_list)
+    box = Box[fruit](FRUIT_TYPE=fruit(), items=fruit_list)
     box.add(Pear())
 
 
 if __name__ == '__main__':
-    main()
+    # main()
+    b = BananaBox(FRUIT_TYPE=Banana())
+    b.add(Banana())
+    b.add(Apple())
+    print(b.items)
