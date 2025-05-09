@@ -1,15 +1,24 @@
 from typing import Generic, TypeVar
 
 from fruits import *
-from pydantic import ConfigDict
+from pydantic import ConfigDict, Field
 
 T = TypeVar('T', bound=Fruit)
 
 
 class Box(BaseModel, Generic[T]):
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    FRUIT_TYPE: T
+    # FRUIT_TYPE: T
+    FRUIT_TYPE: Field(
+        exclude=False,
+        default=T
+    )
     items: list[T] = []
+
+    # val: str = Field(
+    #     exclude=False,
+    #     default="he"
+    # )
 
     def add(self, item: T):
         self.model_validate({'FRUIT_TYPE': item})
@@ -29,11 +38,13 @@ def main():
 
     box = Box[fruit](FRUIT_TYPE=fruit(), items=fruit_list)
     box.add(Pear())
+    print(box.items)
 
 
 if __name__ == '__main__':
-    # main()
-    b = BananaBox(FRUIT_TYPE=Pear())
-    b.add(Banana())
-    # b.add(Apple())
-    print(b.items)
+    b = BananaBox()
+#     box = Box[Pear](FRUIT_TYPE=Pear(), items=[])
+#     print(box.val)
+#     main()
+
+
