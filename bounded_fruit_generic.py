@@ -8,7 +8,6 @@ T = TypeVar('T', bound=Fruit)
 
 class MyBox(BaseModel, Generic[T]):
     model_config = ConfigDict(arbitrary_types_allowed=True)
-
     FRUIT_TYPE: T
     items: list[T] = []
 
