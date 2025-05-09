@@ -1,4 +1,4 @@
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, Any
 
 from pydantic import ConfigDict, Field
 
@@ -12,13 +12,6 @@ class Box[T]:
         self.__items: list[T] = list()
 
     def add(self, item: T) -> None:
-        is_valid_fruit = isinstance(item, Apple)
-        if not is_valid_fruit:
-            print()
-            print(T)
-            print(f'{item} is not a valid fruit')
-            return
-
         self.__items.append(item)
 
     def remove(self, item: T) -> None:
@@ -44,11 +37,37 @@ class FruitBox(BaseModel, Generic[T]):
         self.items.remove(item)
 
 
+class FruitBoxSpecific(BaseModel, Generic[T]):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    fruit_type: T
+    items: list[T] = Field(default_factory=list[T])
+
+    def model_post_init(self, context: Any) -> None:
+        print("we are called here")
+        print(f'{self.fruit_type=}')
+
+        # Box[Apple]()
+        # self.items: list[Apple()] = list(Apple())
+        self.items = list[Apple]()
+
+        # print(self.fruit_type)
+        # print(type(self.fruit_type))
+        # fruit_type = self.fruit_type
+        # # this could also be done with `default_factory`:
+        #
+        # self.items = Field(default_factory=list[fruit_type])
+
+    def add(self, item: T) -> None:
+        self.items.append(item)
+
+    def remove(self, item: T) -> None:
+        self.items.remove(item)
+
+
 def main():
     apple_box = Box[Apple]()
+    print(type(apple_box))
     apple_box.add(Apple())
-    apple_box.add(Pear())
-    exit(0)
     apple_box.add(Apple())
 
     banana_box = BananaBox()
@@ -65,7 +84,22 @@ def any_fruit():
     print(box.items)
 
 
+def fruit_specific():
+    # list[Apple]
+    box = FruitBoxSpecific(fruit_type=Apple(), items=[Apple(), Pear()])
+    # Box[Apple]()
+    box.add(Apple())
+    box.add(Apple())
+    box.add(Apple())
+    box.add(Apple())
+    box.add(Banana())
+    box.add(Pear())
+    for item in box.items:
+        print(item)
+    print(len(box.items))
+
 
 if __name__ == '__main__':
+    fruit_specific()
     # any_fruit()
-    main()
+    # main()
