@@ -38,24 +38,11 @@ class FruitBox(BaseModel, Generic[T]):
 
 
 class FruitBoxSpecific(BaseModel, Generic[T]):
+    FRUIT_TYPE: T
+    items: list[T] = []
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    fruit_type: T
-    items: list[T] = Field(default_factory=list[T])
 
-    def model_post_init(self, context: Any) -> None:
-        print("we are called here")
-        print(f'{self.fruit_type=}')
 
-        # Box[Apple]()
-        # self.items: list[Apple()] = list(Apple())
-        self.items = list[Apple]()
-
-        # print(self.fruit_type)
-        # print(type(self.fruit_type))
-        # fruit_type = self.fruit_type
-        # # this could also be done with `default_factory`:
-        #
-        # self.items = Field(default_factory=list[fruit_type])
 
     def add(self, item: T) -> None:
         self.items.append(item)
@@ -85,8 +72,9 @@ def any_fruit():
 
 
 def fruit_specific():
-    # list[Apple]
-    box = FruitBoxSpecific(fruit_type=Apple(), items=[Apple(), Pear()])
+    box = FruitBoxSpecific[Pear](FRUIT_TYPE=Pear(), items=[
+        Pear(),
+    ])
     # Box[Apple]()
     box.add(Apple())
     box.add(Apple())
